@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\PhotoController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\WelcomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,13 +16,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [PageController::class,'index']);
 
-Route::get('/hello', function(){
-    return 'Hello World';
-});
+Route::get('/hello', [WelcomeController::class,'index']);
 
 Route::get('/world', function(){
     return 'World';
@@ -29,9 +28,9 @@ Route::get('/welcome', function(){
     return 'Selamat Datang';
 });
 
-Route::get('/about', function(){
-    return 'Al Byan Agung Shafiqri (2241720080)';
-});
+Route::get('/about', [PageController::class, 'about']);
+
+Route::get('/articles/{id}', [PageController::class, 'articles']);
 
 Route::get('/user/profile', function(){
     
@@ -59,18 +58,16 @@ Route::domain('{account}.example.com')->group(function () {
         //
     });
 });
-Route::middleware('auth')->group(function () {
-   Route::get('/user', [UserController::class, 'index']);
-   Route::get('/post', [PostController::class, 'index']);
-   Route::get('/event', [EventController::class, 'index']);
-});
-   
-Route::prefix('admin')->group(function () {
-    Route::get('/user', [UserController::class, 'index']);
-    Route::get('/post', [PostController::class, 'index']);
-    Route::get('/event', [EventController::class, 'index']);
-});
 
-Route::redirect('/', '/welcome');
+// Route::redirect('/', '/welcome');
 
 Route::view('/welcome', 'welcome', ['name' => 'Taylor']);
+
+
+Route::resource('photos', PhotoController::class)->only([
+    'index', 'show'
+]);
+
+Route::resource('photos', PhotoController::class)->except([
+    'create', 'store', 'update', 'destroy'
+]);
